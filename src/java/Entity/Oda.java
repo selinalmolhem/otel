@@ -7,7 +7,9 @@ package Entity;
 
 import java.util.Objects;
 
-
+/*
+beyan
+*/
 public class Oda {
     private Long oda_id;
     private long oda_no;
