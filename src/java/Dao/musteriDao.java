@@ -84,19 +84,6 @@ public class musteriDao {
         return musteriList;
     }
 
-//    public void insert(Musteri m) {
-//        try {
-//            PreparedStatement pst = this.getC().prepareStatement("insert into musteri(ad_soyad,TC,tel,addres) values(?,?,?,?)");
-//            pst.setString(1, m.getAd_soyad());
-//            pst.setString(2, m.getTel());
-//            pst.setInt(3, m.getTc());
-//            pst.setString(4, m.getAddres());
-//
-//            //  st.executeUpdate("insert into musteri(ad_soyad,TC,tel,addres) values('" + m.getAd_soyad() + "','" + m.getTc() + "','" + m.getTel() + "','" + m.getAddres() + "')");
-//        } catch (SQLException e) {
-//            Logger.getLogger(musteriDao.class.getName()).log(Level.SEVERE, null, e);
-//        }
-//    }
 
     public void delete(Musteri musteri) {
 
@@ -188,5 +175,27 @@ public class musteriDao {
        }
           
        return l;
+   }
+    public List<Musteri> findAl(){
+              List<Musteri> musteriList = new ArrayList<>();
+
+       try{
+          PreparedStatement pst = this.getC().prepareStatement("select *from musteri");
+            ResultSet rs = pst.executeQuery();
+           while (rs.next()){
+           Musteri tmp=new Musteri();
+           tmp.setMusteri_id(rs.getLong("musteri_id"));
+           tmp.setAd_soyad(rs.getString("ad_soyad"));
+            tmp.setTc(rs.getInt("TC"));
+           tmp.setTel(rs.getString("tel"));
+          tmp.setAddres(rs.getString("addres"));
+           
+          musteriList.add(tmp);
+           }
+       }catch(SQLException ex){
+           System.out.println(ex.getMessage());
+       }
+          
+       return musteriList;
    }
 }
