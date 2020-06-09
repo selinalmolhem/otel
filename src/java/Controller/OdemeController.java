@@ -21,19 +21,57 @@ public class OdemeController implements Serializable{
     private OdemeDAO odemeDao;
     
     private musteriDao musteridao;
-    
-   
     private List<Musteri> musterilist;
-   
+    
+    private int page=1;
+    private int pagesize=10;
+    private int pagecount;
+    
+    public void next(){
+        if(this.page==this.getPagecount())
+            this.page=1;
+        else
+            this.page++;
+    }
+    public void previous(){
+        if(this.page==1)
+            this.page=this.getPagecount();
+        else
+            this.page--;
+    }
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getPagesize() {
+        return pagesize;
+    }
+
+    public void setPagesize(int pagesize) {
+        this.pagesize = pagesize;
+    }
+
+    public int getPagecount() {
+        this.pagecount=(int)Math.ceil(this.getOdemeDao().count()/(double)pagesize);
+        return pagecount;
+    }
+
+    public void setPagecount(int pagecount) {
+        this.pagecount = pagecount;
+    }
     
      public String deleteConfirm(Odeme odeme){
-       return "confirm_delete2";
-   }
+         return "confirm_delete2";
+     }
     
      public String delete(){
            this.getOdemeDao().remove(this.odeme);
-           this.clearForm();
-           return "Odeme";       
+           this.clearForm(); 
+           return "Odeme";
     }
     public void clearForm(){
        this.odeme=new Odeme();
@@ -54,13 +92,11 @@ public class OdemeController implements Serializable{
             this.odeme=new Odeme();
         return odeme;
     }
-
     public void setOdeme(Odeme odeme) {
         this.odeme = odeme;
     }
-
     public List<Odeme> getOdemelist() {
-        this.odemelist=this.getOdemeDao().findAll();
+        this.odemelist=this.getOdemeDao().findAll(page,pagesize);
         return odemelist;
     }
 
@@ -96,10 +132,5 @@ public class OdemeController implements Serializable{
     public void setMusterilist(List<Musteri> musterilist) {
         this.musterilist = musterilist;
     }
-    
-    
-    
-    
-    
-    
+     
 }

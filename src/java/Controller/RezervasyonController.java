@@ -27,6 +27,46 @@ public class RezervasyonController implements Serializable {
     private OdaDAO odaDao;
     private List<Oda> odalist;
     
+    private int page=1;
+    private int pagesize=10;
+    private int pagecount;
+    
+    public void next(){
+        if(this.page==this.getPagecount())
+            this.page=1;
+        else
+            this.page++;
+    }
+    public void previous(){
+        if(this.page==1)
+            this.page=this.getPagecount();
+        else
+            this.page--;
+    }
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getPagesize() {
+        return pagesize;
+    }
+
+    public void setPagesize(int pagesize) {
+        this.pagesize = pagesize;
+    }
+
+    public int getPagecount() {
+        this.pagecount=(int)Math.ceil(this.getRDao().count()/(double)pagesize);
+        return pagecount;
+    }
+
+    public void setPagecount(int pagecount) {
+        this.pagecount = pagecount;
+    }
     
    public String deleteConfirm(Rezervasyon rezer){
        return "confirm_delete3";
@@ -59,7 +99,7 @@ public class RezervasyonController implements Serializable {
         this.rezervasyon = rezervasyon;
     }
     public List<Rezervasyon> getRlist() {
-        this.rlist=this.getRDao().findAll();
+        this.rlist=this.getRDao().findAll(page,pagesize);
         return rlist;
     }
 
@@ -99,7 +139,7 @@ public class RezervasyonController implements Serializable {
     }
 
     public List<Oda> getOdalist() {
-        this.odalist=this.getOdaDao().findAll();
+        this.odalist=this.getOdaDao().findAll(page,pagesize);
         return odalist;
     }
 
