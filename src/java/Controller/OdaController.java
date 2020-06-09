@@ -5,6 +5,8 @@
  */
 package Controller;
 
+
+
 import Dao.OdaDAO;
 import Entity.Oda;
 import java.io.Serializable;
@@ -21,6 +23,48 @@ public class OdaController implements Serializable {
     private OdaDAO odadao;
     
     private Oda oda;
+    
+    private int page=1;
+    private int pagesize=10;
+    private int pagecount;
+    
+    public void next(){
+        if(this.page==this.getPagecount())
+            this.page=1;
+        else
+            this.page++;
+    }
+    public void previous(){
+        if(this.page==1)
+            this.page=this.getPagecount();
+        else
+            this.page--;
+    }
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getPagesize() {
+        return pagesize;
+    }
+
+    public void setPagesize(int pagesize) {
+        this.pagesize = pagesize;
+    }
+
+    public int getPagecount() {
+        this.pagecount=(int)Math.ceil(this.getOdadao().count()/(double)pagesize);
+        return pagecount;
+    }
+
+    public void setPagecount(int pagecount) {
+        this.pagecount = pagecount;
+    }
+    
        
     public void updateForm(Oda oda){
         this.oda=oda;
@@ -55,7 +99,7 @@ public class OdaController implements Serializable {
     }
     
     public List<Oda> getOdalist() {
-        this.odalist=this.getOdadao().findAll();
+        this.odalist=this.getOdadao().findAll(page,pagesize);
         return odalist;
     }
 
