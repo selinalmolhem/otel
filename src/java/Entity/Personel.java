@@ -9,7 +9,7 @@ import java.util.Objects;
  */
 /**
  *
- * @author KING PHONE
+ * @author Selin almolhem
  */
 public class Personel {
 
