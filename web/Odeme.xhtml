@@ -5,14 +5,15 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
-         <h:outputStylesheet library="css" name="bootstrap.css"/> 
+        <h:outputStylesheet library="css" name="bootstrap.css"/>
         <h:outputScript library="js" name="bootstrap.js"/>
+
     </h:head>
-    <h:body>
+        <h:body>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <h:form>
+                                <h:form>
                         <ul class="navbar-nav">
                             <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="musteri" value="MUSTERİ"/>
@@ -21,45 +22,67 @@
                                 <h:commandLink styleClass="nav-link" action="personel" value="PERSONEL"/>
                             </li>
                             <li class="nav-item active">
-                                <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
-                            </li>
-                            <li class="nav-item ">
-                                <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
-                            </li>
-                            <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="Oda" value="ODA"/>
                             </li>
                             <li class="nav-item ">
                                 <h:commandLink styleClass="nav-link" action="Rezervasyon" value="REZERVASYON"/>
                             </li>
+
                             <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="Odeme" value="ODEME"/>
                             </li>
+                            <li class="nav-item">
+                                <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
+                            </li>
+                            <li class="nav-item active">
+                                <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
+                            </li>
+                            <li class="nav-item ">
+                                <h:commandLink styleClass="nav-link" action="document" value="DOCUMENTS"/>
+                            </li>
                         </ul>
+                    </h:form>
+                      <h:form>
+                        <div class="col-md-7">
+                            <h:commandButton action="/index?faces-redirect=true" value="logout" styleClass="btn btn-danger"/>
+                    </div>
                     </h:form>
                 </div>
             </nav>
         </div>
+    </h:body>
+    <h:body>
         <div class="container">
             <div class="row"> 
                 <div class="col-md-7">
-                    <h:form>
+                    <h:form id="odeme-table">
+                        page #{odemeController.page} of #{odemeController.pagecount}
+                        <div class="btn_group">
+                            <h:commandButton action="#{odemeController.previous()}" value="Previous" styleClass="btn btn-outline-dark">
+                                <f:ajax execute="@this" render="odeme-table"/>
+                            </h:commandButton>
+                            <h:commandButton action="#{odemeController.next()}" value="Next" styleClass="btn btn-outline-dark">
+                                <f:ajax execute="@this" render="odeme-table"/>
+                            </h:commandButton>
+
+                        </div>
                         <h:dataTable styleClass="table table-striped" value="#{odemeController.odemelist}" var="odeme">
                             <h:column>
                                 <f:facet name="header">İD</f:facet>
-                                    #{odeme.odeme_id}
-
+                                <h:commandLink action="#{odemeController.updateForm(odeme)}" value="#{odeme.odeme_id}">
+                                    <f:ajax execute="@this" render="odeme-form"/>
+                                </h:commandLink>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">ÖDEME TİPİ</f:facet>
-                                <h:commandLink action="#{odemeController.updateForm(odeme)}" value="#{odeme.odeme_tipi}"/>
+                                    #{odeme.odeme_tipi}  
 
                             </h:column>     
-                           <h:column>
+                            <h:column>
                                 <f:facet name="header">FİYAT</f:facet>
                                     #{odeme.fiyat}
                             </h:column>
-                             <h:column>
+                            <h:column>
                                 <f:facet name="header">TARİH</f:facet>
                                     #{odeme.tarih}
                             </h:column>
@@ -67,41 +90,43 @@
                                 <f:facet name="header">MÜŞTERİ</f:facet>
                                     #{odeme.musteri.ad_soyad}
                             </h:column>
-                            
+
                         </h:dataTable>  
                     </h:form>
                 </div>  
-                    <div class="col-md-5">
-                    <h:form >                       
+                <div class="col-md-5">
+                    <h:form id="odeme-form">                       
                         <div class="form-group">
-                              <lable for="selectmusteri">musteri :</lable>
-                              <h:selectOneMenu styleClass="custom-select" id="selectmusteri" value="#{odemeController.odeme.musteri}" converter="mustericonverter">
-                                  <f:selectItems value="#{odemeController.musterilist}" var="musteri" itemValue="#{musteri}" itemLabel="#{musteri.ad_soyad}"/>
-                              </h:selectOneMenu>
+                            <lable for="selectmusteri">musteri :</lable>
+                            <h:selectOneMenu styleClass="custom-select" id="selectmusteri" value="#{odemeController.odeme.musteri}" converter="musteriConverter">
+                                <f:selectItems value="#{odemeController.musterilist}" var="musteri" itemValue="#{musteri}" itemLabel="#{musteri.ad_soyad}"/>
+                            </h:selectOneMenu>
                         </div>
                         <div class="form-group"> 
                             <h:inputHidden value="#{odemeController.odeme.odeme_id}"/>
-                              <lable for="inputtip">Odeme tipi :</lable>
-                              <h:inputText id="inputtip" styleClass="form-control" value="#{odemeController.odeme.odeme_tipi}"/>
+                            <lable for="inputtip">Odeme tipi :</lable>
+                            <h:inputText id="inputtip" styleClass="form-control" value="#{odemeController.odeme.odeme_tipi}"/>
                         </div>
                         <div class="form-group">
-                             <lable for="inputfiyat">fiyat :</lable>
+                            <lable for="inputfiyat">fiyat :</lable>
                             <h:inputText id="inputfiyat" styleClass="form-control" value="#{odemeController.odeme.fiyat}"/>
-                         </div>   
-                        
+                        </div>   
                         <div class="form-group">
                             <div class="btn-group">
-                            <h:commandButton rendered="#{odemeController.odeme.odeme_id==null}" action="#{odemeController.create}" value="Create" styleClass="btn btn-primary" />
-                            <h:commandButton rendered="#{odemeController.odeme.odeme_id!=null}" action="#{odemeController.update}" value="Update" styleClass="btn btn-primary" />
-                            <h:commandButton rendered="#{odemeController.odeme.odeme_id!=null}" action="#{odemeController.deleteConfirm(odeme)}" value="Delete" styleClass="btn btn-danger" />
-                             </div>
+                                <h:commandButton rendered="#{odemeController.odeme.odeme_id==null}" action="#{odemeController.create}" value="Create" styleClass="btn btn-primary" >
+                                    <f:ajax execute="odeme-form" render="odeme-form odeme-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{odemeController.odeme.odeme_id!=null}" action="#{odemeController.update}" value="Update" styleClass="btn btn-primary" >
+                                    <f:ajax execute="odeme-form" render="odeme-form odeme-table"/>
+                                </h:commandButton>
+                                <h:commandButton  rendered="#{odemeController.odeme.odeme_id!=null}" action="#{odemeController.deleteConfirm(odeme)}"  value="Delete" styleClass="btn btn-danger"/>
+                                        
+                            </div>
                         </div>
                     </h:form> 
-                  </div>
-
-                </div>          
+                </div>
+            </div> 
             </div>
-           
     </h:body>
 </html>
 

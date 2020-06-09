@@ -10,7 +10,7 @@
         <h:outputScript library="js" name="bootstrap.js"/>
     </h:head>
     <h:body>
-         <div class="container">
+        <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <h:form>
@@ -22,53 +22,74 @@
                                 <h:commandLink styleClass="nav-link" action="personel" value="PERSONEL"/>
                             </li>
                             <li class="nav-item active">
-                                <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
-                            </li>
-                            <li class="nav-item ">
-                                <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
-                            </li>
-                            <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="Oda" value="ODA"/>
                             </li>
                             <li class="nav-item ">
                                 <h:commandLink styleClass="nav-link" action="Rezervasyon" value="REZERVASYON"/>
                             </li>
+
                             <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="Odeme" value="ODEME"/>
                             </li>
+                            <li class="nav-item">
+                                <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
+                            </li>
+                            <li class="nav-item active">
+                                <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
+                            </li>
+                            <li class="nav-item ">
+                                <h:commandLink styleClass="nav-link" action="document" value="DOCUMENTS"/>
+                            </li>
                         </ul>
+                    </h:form>
+                    <h:form>
+                        <div class="col-md-7">
+                            <h:commandButton action="/index?faces-redirect=true" value="logout" styleClass="btn btn-danger"/>
+                        </div>
                     </h:form>
                 </div>
             </nav>
         </div>
+    </h:body>
+    <h:body>
         <div class="container">
             <div class="row">
-
                 <div class="col-md-7">
-                    <h:form>
+                    <h:form id="r-table">
+                        page #{rezervasyonController.page} of #{rezervasyonController.pagecount}
+                        <div class="btn_group">
+                            <h:commandButton action="#{rezervasyonController.previous()}" value="Previous" styleClass="btn btn-outline-dark"> 
+                                <f:ajax execute="@this" render="r-table"/>
+                            </h:commandButton>
+                            <h:commandButton action="#{rezervasyonController.next()}" value="Next" styleClass="btn btn-outline-dark">
+                                <f:ajax execute="@this" render="r-table"/>
+                            </h:commandButton>
+                        </div>
                         <h:dataTable styleClass="table table-striped table-hover" value="#{rezervasyonController.rlist}" var="rezervasyon">
                             <h:column>
                                 <f:facet name="header">İD</f:facet>
-                                    #{rezervasyon.rezervasyon_id}
+                                <h:commandLink action="#{rezervasyonController.updateForm(rezervasyon)}" value="#{rezervasyon.rezervasyon_id}">
+                                    <f:ajax execute="@this" render="r-form"/>
+                                </h:commandLink>
 
                             </h:column>
                             <h:column>
                                 <f:facet name="header">GİRİŞ TARİHİ </f:facet>
-                                <h:commandLink action="#{rezervasyonController.updateForm(rezervasyon)}" value="#{rezervasyon.giris_tarihi}"/>
+                                    #{rezervasyon.giris_tarihi}
 
                             </h:column>
 
                             <h:column>
                                 <f:facet name="header">ÇIKIŞ TARİHİ</f:facet>
-                                #{rezervasyon.cikis_tarihi}
+                                    #{rezervasyon.cikis_tarihi}
                             </h:column>
                             <h:column>
                                 <f:facet name="header">MÜŞTERİ </f:facet>   
-                                #{rezervasyon.musteri.ad_soyad}
+                                    #{rezervasyon.musteri.ad_soyad}
                             </h:column>
                             <h:column>
                                 <f:facet name="header">ODA No </f:facet>   
-                                #{rezervasyon.oda.oda_no}
+                                    #{rezervasyon.oda.oda_no}
                             </h:column>
                         </h:dataTable>  
                     </h:form>
@@ -76,29 +97,34 @@
                 </div>
 
                 <div class="col-md-5">
-                    <h:form>
+                    <h:form id="r-form">
                         <div class="form-group" >
                             <label for="selectmusteri">Musteri :</label>
-                            <h:selectOneMenu styleClass="custom-select" id="selectmusteri" value="#{rezervasyonController.rezervasyon.musteri}" converter="mustericonverter">
+                            <h:selectOneMenu styleClass="custom-select" id="selectmusteri" value="#{rezervasyonController.rezervasyon.musteri}" converter="musteriConverter">
                                 <f:selectItems value="#{rezervasyonController.musterilist}" var="Musteri"  itemValue="#{Musteri}" itemLabel="#{Musteri.ad_soyad}"/>
                             </h:selectOneMenu>
-                            
+
                             <label for="inputgtarih">giris tarihi :</label>
                             <h:inputText styleClass="form-control" value="#{rezervasyonController.rezervasyon.giris_tarihi}"/> 
-                            
+
                             <label for="inputctarih">cikis tarihi :</label>
                             <h:inputText styleClass="form-control" value="#{rezervasyonController.rezervasyon.cikis_tarihi}" />
-                            
-                             <label for="selectoda">Oda no :</label>
-                             <h:selectOneMenu styleClass="custom-select" id="selectoda" value="#{rezervasyonController.rezervasyon.oda}" converter="odaConverter">
-                                 <f:selectItems value="#{rezervasyonController.odalist}" var="Oda"  itemValue="#{Oda}" itemLabel="#{Oda.oda_no}"/>
+
+                            <label for="selectoda">Oda no :</label>
+                            <h:selectOneMenu styleClass="custom-select" id="selectoda" value="#{rezervasyonController.rezervasyon.oda}" converter="odaConverter">
+                                <f:selectItems value="#{rezervasyonController.odalist}" var="Oda"  itemValue="#{Oda}" itemLabel="#{Oda.oda_no}"/>
                             </h:selectOneMenu>
                         </div>
                         <div class="form-group" >
-                            <h:commandButton rendered="#{rezervasyonController.rezervasyon.rezervasyon_id==null}" action="#{rezervasyonController.create}" value="Create" styleClass="btn btn-primary"/>
-                            <h:commandButton rendered="#{rezervasyonController.rezervasyon.rezervasyon_id!=null}" action="#{rezervasyonController.update}" value="Update" styleClass="btn btn-primary"/>
-                            <h:commandButton rendered="#{rezervasyonController.rezervasyon.rezervasyon_id!=null}" action="#{rezervasyonController.deleteConfirm(rezervasyon)}" value="Delete" styleClass="btn btn-danger"/>
-
+                            <div class="btn-group">
+                                <h:commandButton rendered="#{rezervasyonController.rezervasyon.rezervasyon_id==null}" action="#{rezervasyonController.create}" value="Create" styleClass="btn btn-primary">
+                                    <f:ajax execute="r-form" render="r-form r-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{rezervasyonController.rezervasyon.rezervasyon_id!=null}" action="#{rezervasyonController.update}" value="Update" styleClass="btn btn-primary">
+                                    <f:ajax execute="r-form" render="r-form r-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{rezervasyonController.rezervasyon.rezervasyon_id!=null}" action="#{rezervasyonController.deleteConfirm(rezervasyon)}" value="Delete" styleClass="btn btn-danger"/>
+                            </div>
                         </div>
                     </h:form> 
                 </div>
@@ -107,7 +133,7 @@
 
         </div>
     </h:body>
-    
+
 </html>
 
 
