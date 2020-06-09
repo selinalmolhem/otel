@@ -10,11 +10,11 @@
         <h:outputScript library="js" name="bootstrap.js"/>
 
     </h:head>
-    <h:body>
+     <h:body>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <h:form>
+                                <h:form>
                         <ul class="navbar-nav">
                             <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="musteri" value="MUSTERİ"/>
@@ -23,29 +23,49 @@
                                 <h:commandLink styleClass="nav-link" action="personel" value="PERSONEL"/>
                             </li>
                             <li class="nav-item active">
-                                <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
-                            </li>
-                            <li class="nav-item ">
-                                <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
-                            </li>
-                            <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="Oda" value="ODA"/>
                             </li>
                             <li class="nav-item ">
                                 <h:commandLink styleClass="nav-link" action="Rezervasyon" value="REZERVASYON"/>
                             </li>
+
                             <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="Odeme" value="ODEME"/>
                             </li>
+                            <li class="nav-item">
+                                <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
+                            </li>
+                            <li class="nav-item active">
+                                <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
+                            </li>
+                            <li class="nav-item ">
+                                <h:commandLink styleClass="nav-link" action="document" value="DOCUMENTS"/>
+                            </li>
                         </ul>
+                    </h:form>
+                      <h:form>
+                        <div class="col-md-7">
+                            <h:commandButton action="/index?faces-redirect=true" value="logout" styleClass="btn btn-danger"/>
+                    </div>
                     </h:form>
                 </div>
             </nav>
         </div>
+    </h:body>
+    <h:body>
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
                     <h:form id="oda-table">
+                        page #{odaController.page} of #{odaController.pagecount}
+                        <div class="btn_group">
+                            <h:commandButton action="#{odaController.previous()}" value="Previous" styleClass="btn btn-outline-dark">
+                                <f:ajax execute="@this" render="oda-table"/>
+                            </h:commandButton>
+                            <h:commandButton action="#{odaController.next()}" value="Next" styleClass="btn btn-outline-dark">
+                                <f:ajax execute="@this" render="oda-table"/>
+                            </h:commandButton>
+                        </div>
                         <h:dataTable  styleClass="table table-striped table-hover" value="#{odaController.odalist}" var="oda">
                             <h:column>
                                 <f:facet name="header" >İD  </f:facet>
@@ -53,7 +73,9 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header" >  ODA NO </f:facet>
-                                <h:commandLink action="#{odaController.updateForm(oda)}" value=" #{oda.oda_no}"/>
+                                <h:commandLink action="#{odaController.updateForm(oda)}" value=" #{oda.oda_no}">
+                                    <f:ajax execute="@this" render="oda-form"/>
+                                </h:commandLink>
 
                             </h:column>
                             <h:column>
@@ -64,12 +86,9 @@
                                 <f:facet name="header" > DURUM </f:facet>
                                     #{oda.durum}
                             </h:column>
-
                         </h:dataTable>
                     </h:form>
-
                 </div>
-
                 <div class="col-md-6">
                     <h:form id="oda-form">
                         <div class="form-group">
@@ -85,18 +104,19 @@
                         </div>
                         <div class="form-group">
                             <div class="btn-group">
-
-                                <h:commandButton rendered="#{odaController.oda.oda_id ==null}" styleClass="btn btn-primary" value="Create" action="#{odaController.create}"/>
-                                <h:commandButton rendered="#{odaController.oda.oda_id!=null}"  styleClass="btn btn-primary"    value="update" action="#{odaController.update}"/> 
+                                <h:commandButton rendered="#{odaController.oda.oda_id ==null}" styleClass="btn btn-primary" value="Create" action="#{odaController.create}">
+                                    <f:ajax execute="oda-form" render="oda-form oda-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{odaController.oda.oda_id!=null}"  styleClass="btn btn-primary"    value="update" action="#{odaController.update}">
+                                    <f:ajax execute="oda-form" render="oda-form oda-table"/>
+                                </h:commandButton>
                                 <h:commandButton rendered="#{odaController.oda.oda_id!=null}"  styleClass="btn btn-danger" value="Delete" action="#{odaController.deleteConfirm(oda)}"/>
                             </div>
                         </div>
                     </h:form>
-
                 </div>
             </div>
         </div>
-
     </h:body>
 </html>
 
