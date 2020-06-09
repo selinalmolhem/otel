@@ -7,12 +7,14 @@
     <h:head>
         <title>Facelet Title</title>
         <h:outputStylesheet library="css" name="bootstrap.css"/>
-        <h:outputScript library="js" name="bootstrap.js"/>    </h:head>
+        <h:outputScript library="js" name="bootstrap.js"/>    
+        
+    </h:head>
     <h:body>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <h:form>
+                                <h:form>
                         <ul class="navbar-nav">
                             <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="musteri" value="MUSTERİ"/>
@@ -20,13 +22,31 @@
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link" action="personel" value="PERSONEL"/>
                             </li>
+                            <li class="nav-item active">
+                                <h:commandLink styleClass="nav-link" action="Oda" value="ODA"/>
+                            </li>
+                            <li class="nav-item ">
+                                <h:commandLink styleClass="nav-link" action="Rezervasyon" value="REZERVASYON"/>
+                            </li>
+
+                            <li class="nav-item active">
+                                <h:commandLink styleClass="nav-link" action="Odeme" value="ODEME"/>
+                            </li>
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
                             </li>
+                            <li class="nav-item ">
+                                <h:commandLink styleClass="nav-link" action="document" value="DOCUMENTS"/>
+                            </li>
                         </ul>
+                    </h:form>
+                      <h:form>
+                        <div class="col-md-7">
+                            <h:commandButton action="/index?faces-redirect=true" value="logout" styleClass="btn btn-danger"/>
+                    </div>
                     </h:form>
                 </div>
             </nav>
@@ -36,8 +56,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-7">
-                    <h:form id="musteri_table">
+                    <h:form id="musteri-table">
+                        <pre> Page #{mustericontroller.page} of #{mustericontroller.pageCount}</pre>
+                        <div class="btn-group">
+                            <h:commandButton action="#{mustericontroller.previous()}" value="previous" styleClass="btn btn-outline-dark">
+                                <f:ajax execute="@this" render="musteri-table"/>
+                            </h:commandButton>
+                            <h:commandButton action="#{mustericontroller.next()}" value="next" styleClass="btn btn-outline-dark">
+                                <f:ajax execute="@this" render="musteri-table"/>
+                            </h:commandButton>
 
+                        </div>
                         <h:dataTable class="table table-striped table-hover" 
                                      value="#{mustericontroller.musteriList}" var="musteri">
                             <h:column>
@@ -47,9 +76,8 @@
                             <h:column>
                                 <f:facet name="header">Ad Soyad</f:facet>
                                 <h:commandLink action="#{mustericontroller.updateForm(musteri)}" value="#{musteri.ad_soyad}">
-                                    <f:ajax execute="@this" render="musteri_form"/>
+                                    <f:ajax execute="@this" render="musteri-form"/>
                                 </h:commandLink>
-
                             </h:column>
                             <h:column>
                                 <f:facet name="header">Tel No</f:facet>
@@ -80,7 +108,7 @@
                     </h:form>
                 </div>
                 <div class="col-md-7">
-                    <h:form id="musteri_form">
+                    <h:form id="musteri-form">
                         <div class="form-group">
 
                             <label for= "selectedpersonel">personel</label>
@@ -107,36 +135,36 @@
 
                         <div class="form-group">
                             <tr>
-                            <label for= "inputyemek">menu</label>
-                            <h:selectManyCheckbox styleClass="row" value="#{mustericontroller.musteri.musteri_lokanta}"
-                                                  converter="Lokantaconverter">
-                                <f:selectItems value="#{mustericontroller.lokantacontroller.lokantaList}" 
-                                               var="lokanta" 
-                                               itemValue="#{lokanta}"
-                                               itemLabel="#{lokanta.menu}"/> 
-                            </h:selectManyCheckbox>
+                                <label for= "inputyemek">menu</label>
+                                <h:selectManyCheckbox styleClass="row" value="#{mustericontroller.musteri.musteri_lokanta}"
+                                                      converter="Lokantaconverter">
+                                    <f:selectItems value="#{mustericontroller.lokantacontroller.lokantaList}" 
+                                                   var="lokanta" 
+                                                   itemValue="#{lokanta}"
+                                                   itemLabel="#{lokanta.menu}"/> 
+                                </h:selectManyCheckbox>
                             </tr>
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="btn-group">
                                 <h:commandButton rendered="#{mustericontroller.musteri.musteri_id!=null}" styleClass="btn btn-primary" value="update" action="#{mustericontroller.update}">
-                                    <f:ajax execute="musteri_form" render="musteri_form musteri_table"/>
+                                    <f:ajax execute="musteri-form" render="musteri-form musteri-table"/>
                                 </h:commandButton>
                                 <h:commandButton rendered="#{mustericontroller.musteri.musteri_id==null}" styleClass="btn btn-primary" value="create" action="#{mustericontroller.create}">
-                                    <f:ajax execute="musteri_form" render="musteri_form musteri_table"/>
+                                    <f:ajax execute="musteri-form" render="musteri-form musteri-table"/>
                                 </h:commandButton>
-                                <h:commandButton rendered="#{mustericontroller.musteri.musteri_id!=null}" styleClass="btn btn-danger" value="delete" action="#{mustericontroller.delete()}">
-                                    <f:ajax execute="musteri_form" render="musteri_form musteri_table"/>
+                                <h:commandButton rendered="#{mustericontroller.musteri.musteri_id!=null}" styleClass="btn btn-danger" value="delete" action="#{mustericontroller.deleteConfirm(musteri)}">
+                                    
                                 </h:commandButton>
                             </div>
                         </div>
-                   
-                </h:form>
-                    </div>
+
+                    </h:form>
+                </div>
             </div>
-            </div>
-        
+        </div>
+
     </h:body>
 </html>
 

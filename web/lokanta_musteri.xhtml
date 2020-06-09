@@ -5,10 +5,10 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
-           <h:outputStylesheet library="css" name="bootstrap.css"/>
+        <h:outputStylesheet library="css" name="bootstrap.css"/>
         <h:outputScript library="js" name="bootstrap.js"/>
     </h:head>
-   <h:body>
+    <h:body>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -18,78 +18,105 @@
                                 <h:commandLink styleClass="nav-link" action="musteri" value="MUSTERİ"/>
                             </li>
                             <li class="nav-item">
-                                <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="PERSONEL"/>
+                                <h:commandLink styleClass="nav-link" action="personel" value="PERSONEL"/>
+                            </li>
+                            <li class="nav-item active">
+                                <h:commandLink styleClass="nav-link" action="Oda" value="ODA"/>
+                            </li>
+                            <li class="nav-item ">
+                                <h:commandLink styleClass="nav-link" action="Rezervasyon" value="REZERVASYON"/>
+                            </li>
+
+                            <li class="nav-item active">
+                                <h:commandLink styleClass="nav-link" action="Odeme" value="ODEME"/>
                             </li>
                             <li class="nav-item">
                                 <h:commandLink styleClass="nav-link" action="lokanta" value="LOKANTA"/>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item active">
                                 <h:commandLink styleClass="nav-link" action="lokanta_musteri" value="TALEP_LİSTESİ"/>
                             </li>
+                            <li class="nav-item ">
+                                <h:commandLink styleClass="nav-link" action="document" value="DOCUMENTS"/>
+                            </li>
                         </ul>
+                    </h:form>
+                      <h:form>
+                        <div class="col-md-7">
+                            <h:commandButton action="/index?faces-redirect=true" value="logout" styleClass="btn btn-danger"/>
+                    </div>
                     </h:form>
                 </div>
             </nav>
         </div>
     </h:body>
-     <h:body>
+    <h:body>
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h:form>
-
+                    <h:form id="lokanta_musteri-table">
+                        <pre> Page #{lokanta_mustericontroller.page} of #{lokanta_mustericontroller.pageCount}</pre>
+                        <div class="btn-group">
+                            <h:commandButton action="#{lokanta_mustericontroller.previous()}" value="previous" styleClass="btn btn-outline-dark">
+                                             <f:ajax execute="@this" render="lokanta_musteri-table"/>
+                            </h:commandButton>
+                            <h:commandButton action="#{lokanta_mustericontroller.next()}" value="next" styleClass="btn btn-outline-dark">
+                                             <f:ajax execute="@this" render="lokanta_musteri-table"/>
+                            </h:commandButton>
+                        </div>
                         <h:dataTable class="table table-striped table-hover" 
                                      value="#{lokanta_mustericontroller.lokanta_musterilist}" var="lokanta_musteri">
                             <h:column>
                                 <f:facet name="header">İd</f:facet>
-                                #{lokanta_musteri.lokanta_musteri_id}
-                                   
-                            
+                                    #{lokanta_musteri.lokanta_musteri_id}
                             </h:column> 
                             <h:column>
                                 <f:facet name="header">musteri</f:facet>
-                                <h:commandLink action="#{lokanta_mustericontroller.updateForm(lokanta_musteri)}" value="#{lokanta_musteri.musteri.ad_soyad}"/>
-                                
-
+                                <h:commandLink action="#{lokanta_mustericontroller.updateForm(lokanta_musteri)}" value="#{lokanta_musteri.musteri.ad_soyad}">
+                                    <f:ajax execute="@this" render="lokanta_musteri-form"/>
+                                </h:commandLink>
                             </h:column>
-                             <h:column>
+                            <h:column>
                                 <f:facet name="header">menu</f:facet>
-                                #{lokanta_musteri.lokanta.menu}
+                                    #{lokanta_musteri.lokanta.menu}
 
                             </h:column>
-                          
+
                             <h:column>
                                 <f:facet name="header">tarih</f:facet>
                                     #{lokanta_musteri.tarih}
                             </h:column>
-                         
+
                         </h:dataTable>
                     </h:form>
                 </div>
                 <div class="col-md-6">
-                    <h:form>
+                    <h:form id="lokanta_musteri-form">
                         <div class="form-group">
-                          
-                
-                            
                             <label for= "selectmusteri">musteri</label>
                             <h:selectOneMenu styleClass="custom-select" id="selectmusteri" value="#{lokanta_mustericontroller.lokanta_musteri.musteri}" converter="mustericonverter">
                                 <f:selectItems value="#{lokanta_mustericontroller.musterilist}" var="musteri" itemValue="#{musteri}" itemLabel="#{musteri.ad_soyad}" ></f:selectItems>
                             </h:selectOneMenu>
-                            </div>
-                            <h:inputHidden value="#{lokanta_mustericontroller.lokanta_musteri.lokanta_musteri_id}"/>
-                            <div class="form-group">
+                        </div>
+                        <h:inputHidden value="#{lokanta_mustericontroller.lokanta_musteri.lokanta_musteri_id}"/>
+                        <div class="form-group">
                             <label for= "selectlokanta">menu</label>
                             <h:selectOneMenu styleClass="custom-select" id="selectlokanta" value="#{lokanta_mustericontroller.lokanta_musteri.lokanta}" converter="Lokantaconverter">
                                 <f:selectItems value="#{lokanta_mustericontroller.lokantlist}" var="lokanta" itemValue="#{lokanta}" itemLabel="#{lokanta.menu}" ></f:selectItems>
                             </h:selectOneMenu>
-                            </div>
-                        
-                        <div class="form-group">
-                            <h:commandButton rendered="#{lokanta_mustericontroller.lokanta_musteri.musteri.ad_soyad!=null}" styleClass="btn btn-danger" value="delete" action="#{lokanta_mustericontroller.deleteConfirm(lokanta)}"/>
+                        </div>
 
-                            <h:commandButton rendered="#{lokanta_mustericontroller.lokanta_musteri.musteri.ad_soyad!=null}" styleClass="btn btn-primary" value="update" action="#{lokanta_mustericontroller.update}"/>
-                            <h:commandButton rendered="#{lokanta_mustericontroller.lokanta_musteri.musteri.ad_soyad ==null}" styleClass="btn btn-primary" value="create" action="#{lokanta_mustericontroller.create}"/>
+                        <div class="form-group">
+                            <h:commandButton rendered="#{lokanta_mustericontroller.lokanta_musteri.musteri.ad_soyad!=null}" styleClass="btn btn-danger" value="delete" action="#{lokanta_mustericontroller.deleteConfirm(lokanta)}">
+
+                            </h:commandButton>
+
+                            <h:commandButton rendered="#{lokanta_mustericontroller.lokanta_musteri.musteri.ad_soyad!=null}" styleClass="btn btn-primary" value="update" action="#{lokanta_mustericontroller.update}">
+                                <f:ajax execute="lokanta_musteri-form" render="lokanta_musteri-form lokanta_musteri-table "/>
+                            </h:commandButton>
+                            <h:commandButton rendered="#{lokanta_mustericontroller.lokanta_musteri.musteri.ad_soyad ==null}" styleClass="btn btn-primary" value="create" action="#{lokanta_mustericontroller.create}">
+                                <f:ajax execute="lokanta_musteri-form" render="lokanta_musteri-form lokanta_musteri-table "/>
+                            </h:commandButton>
                         </div>
                     </h:form>
                 </div>
