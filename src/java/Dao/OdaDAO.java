@@ -34,11 +34,12 @@ public class OdaDAO {
        return oda;
    }  
     
-    public List<Oda> findAll(){
+    public List<Oda> findAll(int page,int pagesize){
         List<Oda> odalist=new ArrayList<>();  
+        int start=(page-1)*pagesize;
         try {
            
-            PreparedStatement pst = this.getConnection().prepareStatement("select *from oda order by oda_id desc");
+            PreparedStatement pst = this.getConnection().prepareStatement("select *from oda order by oda_id asc limit "+start+" ,"+pagesize);
             ResultSet rs = pst.executeQuery();
             while(rs.next()){
               
@@ -54,6 +55,21 @@ public class OdaDAO {
         }
               
         return odalist;
+    }
+    public int count() {
+        int count=0;     
+        try {
+           
+            PreparedStatement pst=this.getConnection().prepareStatement("select count(oda_id) as oda_count from oda");
+            ResultSet rs=pst.executeQuery();
+            rs.next();
+            count=rs.getInt("oda_count");
+            
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+              
+        return count;   
     }
     public void insert(Oda oda) {
       try{          

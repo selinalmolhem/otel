@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author KING PHONE
+ * @author Selin almolhem
  */
 public class personelDao {
 
@@ -105,6 +105,42 @@ public class personelDao {
         try {
             Statement st = this.getC().createStatement();
             ResultSet rs = st.executeQuery("select *from personel");
+            while (rs.next()) {
+                Personel personel = new Personel();
+                personel.setPersonel_id(rs.getLong("personel_id"));
+                personel.setAd_soyad(rs.getString("ad_soyad"));
+                personel.setTc(rs.getInt("TC"));
+                personel.setTel(rs.getString("tel"));
+                personelList.add(personel);
+            }
+        } catch (SQLException e) {
+
+            Logger.getLogger(personelDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return personelList;
+    }
+
+    public int count() {
+        int count = 0;
+
+        try {
+            Statement st = this.getC().createStatement();
+            ResultSet rs = st.executeQuery("select count(personel_id) as personel_count from personel");
+            rs.next();
+            count = rs.getInt("personel_count");
+        } catch (SQLException e) {
+
+            Logger.getLogger(personelDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return count;
+    }
+
+    public List<Personel> findAll(int page, int pageSize) {
+        List<Personel> personelList = new ArrayList<>();
+        int start = (page - 1) * pageSize;
+        try {
+            PreparedStatement pst = this.getC().prepareStatement("select *from personel order by personel_id asc limit "+start+","+pageSize);
+            ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 Personel personel = new Personel();
                 personel.setPersonel_id(rs.getLong("personel_id"));
