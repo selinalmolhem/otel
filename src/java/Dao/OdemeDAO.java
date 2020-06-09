@@ -9,7 +9,6 @@ import Entity.Odeme;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import Util.Connector;
@@ -23,9 +22,9 @@ public class OdemeDAO {
     private Connection connection;
     
     private musteriDao musteridao;
+  
     
-    
-     public Odeme find(Long id){
+    public Odeme find(Long id){
        Odeme odeme=null;
        try{
           PreparedStatement pst = this.getConnection().prepareStatement("select *from odeme where odeme_id=?");
@@ -44,12 +43,13 @@ public class OdemeDAO {
           
        return odeme;
    }  
-  
-    public List<Odeme> findAll() {
-         List<Odeme> odemelist=new ArrayList<>();      
+    
+    public List<Odeme> findAll(int page,int pagesize ) {
+        List<Odeme> odemelist=new ArrayList<>(); 
+        int start=(page-1)*pagesize;
         try {
            
-             PreparedStatement pst=this.getConnection().prepareStatement("select * from odeme order by odeme_id desc ");
+             PreparedStatement pst=this.getConnection().prepareStatement("select * from odeme order by odeme_id asc limit "+start+" ,"+pagesize);
             ResultSet rs=pst.executeQuery();
             while(rs.next()){
               
@@ -69,7 +69,21 @@ public class OdemeDAO {
               
         return odemelist;   
     }
-  
+    public int count() {
+        int count=0;     
+        try {
+           
+            PreparedStatement pst=this.getConnection().prepareStatement("select count(odeme_id) as odeme_count from odeme");
+            ResultSet rs=pst.executeQuery();
+            rs.next();
+            count=rs.getInt("odeme_count");
+            
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+              
+        return count;   
+    }
    
     public void create(Odeme odeme) {
         
@@ -112,7 +126,6 @@ public class OdemeDAO {
         }    
     }
 
-    
  public musteriDao getMusteridao() {
         if(this.musteridao==null)
             this.musteridao=new musteriDao();

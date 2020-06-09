@@ -23,7 +23,6 @@ public class RezervasyonDAO {
     private musteriDao musteridao;
 
     private OdaDAO odaDao;
-
     
     public Rezervasyon find(Long id){
        Rezervasyon r=null;
@@ -43,13 +42,12 @@ public class RezervasyonDAO {
           
        return r;
    }
-    public List<Rezervasyon> findAll() {
 
+    public List<Rezervasyon> findAll(int page,int pagesize) {
         List<Rezervasyon> rezervasyonlist = new ArrayList<>();
-
+        int start=(page-1)*pagesize;
         try {
-
-            PreparedStatement pst = this.getConnection().prepareStatement("select * from rezervasyon order by rezervasyon_id desc ");
+            PreparedStatement pst = this.getConnection().prepareStatement("select * from rezervasyon order by rezervasyon_id asc limit "+start+" ,"+pagesize);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 Rezervasyon tmp = new Rezervasyon();
@@ -67,6 +65,21 @@ public class RezervasyonDAO {
         }
 
         return rezervasyonlist;
+    }
+    public int count() {
+        int count=0;     
+        try {
+           
+            PreparedStatement pst=this.getConnection().prepareStatement("select count(rezervasyon_id) as r_count from rezervasyon");
+            ResultSet rs=pst.executeQuery();
+            rs.next();
+            count=rs.getInt("r_count");
+            
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+              
+        return count;   
     }
 
     public musteriDao getMusteridao() {
@@ -96,7 +109,6 @@ public class RezervasyonDAO {
             System.out.println(ex.getMessage());
         }
     }
-
     public void edit(Rezervasyon rezervasyon) {
         try {
             PreparedStatement pst = this.getConnection().prepareStatement("update rezervasyon set giris_tarihi=?,cikis_tarihi=?,musteri_id=?,oda_id=? where rezervasyon_id=?");
