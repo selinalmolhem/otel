@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author KING PHONE
+ * @author Selin almolhem
  */
 public class lokanta_musteriDao {
 
@@ -66,11 +66,11 @@ public class lokanta_musteriDao {
         }
     }
 
-    public List<Lokanta_musteri> findAll() {
+    public List<Lokanta_musteri> findAll(int page, int pageSize) {
         List<Lokanta_musteri> lokanta_musteriList = new ArrayList<>();
-
+        int start = (page - 1) * pageSize;
         try {
-            PreparedStatement pst = this.getC().prepareStatement("select *from lokanta_musteri");
+            PreparedStatement pst = this.getC().prepareStatement("select *from lokanta_musteri order by lokanta_musteri_id asc limit " + start + "," + pageSize);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 Lokanta_musteri lokanta_musteri = new Lokanta_musteri();
@@ -86,6 +86,21 @@ public class lokanta_musteriDao {
             Logger.getLogger(lokanta_musteriDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return lokanta_musteriList;
+    }
+
+    public int count() {
+        int count = 0;
+
+        try {
+            Statement st = this.getC().createStatement();
+            ResultSet rs = st.executeQuery("select count(lokanta_musteri_id) as lokanta_musteri_count from lokanta_musteri");
+            rs.next();
+            count = rs.getInt("lokanta_musteri_count");
+        } catch (SQLException e) {
+
+            Logger.getLogger(personelDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return count;
     }
 
     public Connector getDb() {

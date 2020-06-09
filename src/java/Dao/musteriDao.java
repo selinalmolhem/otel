@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author KING PHONE
+ * @author Selin almolhem
  */
 public class musteriDao {
 
@@ -58,7 +58,6 @@ public class musteriDao {
         }
         return ADO;
     }
-
     public List<Musteri> findAll() {
         List<Musteri> musteriList = new ArrayList<>();
 
@@ -83,7 +82,60 @@ public class musteriDao {
         }
         return musteriList;
     }
+    public List<Musteri> findAll(int page,int pageSize) {
+        List<Musteri> musteriList = new ArrayList<>();
+int start = (page-1) *pageSize;
+        try {
+            PreparedStatement pst = this.getC().prepareStatement("select * from musteri order by musteri_id asc limit "+start+","+pageSize);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Musteri musteri = new Musteri();
+                musteri.setMusteri_id(rs.getLong("musteri_id"));
+                musteri.setAd_soyad(rs.getString("ad_soyad"));
+                musteri.setTc(rs.getInt("TC"));
+                musteri.setTel(rs.getString("tel"));
+                musteri.setAddres(rs.getString("addres"));
 
+                musteri.setMusteri_lokanta(this.getLokantaDao().getmusterlokanta(musteri.getMusteri_id()));
+                musteri.setPersonel(this.getADO().find(rs.getLong("personel_id")));
+                musteriList.add(musteri);
+            }
+        } catch (SQLException e) {
+
+            Logger.getLogger(musteriDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return musteriList;
+    }
+    public  int count() {
+int count = 0;
+        try {
+            PreparedStatement pst = this.getC().prepareStatement("select count(musteri_id) as musteri_count from musteri");
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            count = rs.getInt("musteri_count");
+            
+        
+            
+        } catch (SQLException e) {
+
+            Logger.getLogger(musteriDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return count;
+    }
+
+//    public void insert(Musteri m) {
+//        try {
+//            PreparedStatement pst = this.getC().prepareStatement("insert into musteri(ad_soyad,TC,tel,addres) values(?,?,?,?)");
+//            pst.setString(1, m.getAd_soyad());
+//            pst.setString(2, m.getTel());
+//            pst.setInt(3, m.getTc());
+//            pst.setString(4, m.getAddres());
+//
+//            //  st.executeUpdate("insert into musteri(ad_soyad,TC,tel,addres) values('" + m.getAd_soyad() + "','" + m.getTc() + "','" + m.getTel() + "','" + m.getAddres() + "')");
+//        } catch (SQLException e) {
+//            Logger.getLogger(musteriDao.class.getName()).log(Level.SEVERE, null, e);
+//        }
+//    }
 
     public void delete(Musteri musteri) {
 
@@ -176,7 +228,7 @@ public class musteriDao {
           
        return l;
    }
-    public List<Musteri> findAl(){
+     public List<Musteri> findAl(){
               List<Musteri> musteriList = new ArrayList<>();
 
        try{

@@ -19,14 +19,50 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author KING PHONE
+ * @author Selin almolhem
  */
 public class lokantaDao {
 
     Connector db = new Connector();
 
     Connection c = db.connect();
-    
+
+    public int count() {
+        int count = 0;
+
+        try {
+            Statement st = this.getC().createStatement();
+            ResultSet rs = st.executeQuery("select count(lokanta_id) as lokanta_count from lokanta");
+            rs.next();
+            count = rs.getInt("lokanta_count");
+        } catch (SQLException e) {
+
+            Logger.getLogger(personelDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return count;
+    }
+
+    public List<Lokanta> findAll(int page, int pageSize) {
+        List<Lokanta> lokantaList = new ArrayList<>();
+        int start = (page - 1) * pageSize;
+        try {
+            PreparedStatement pst = this.getC().prepareStatement("select *from lokanta order by lokanta_id asc limit " + start + "," + pageSize);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Lokanta lokanta = new Lokanta();
+                lokanta.setMenu_id(rs.getLong("lokanta_id"));
+                lokanta.setMenu(rs.getString("menu"));
+                lokanta.setFiyat(rs.getInt("fiyat"));
+
+                lokantaList.add(lokanta);
+            }
+        } catch (SQLException e) {
+
+            Logger.getLogger(lokantaDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return lokantaList;
+    }
+
     public List<Lokanta> findAll() {
         List<Lokanta> lokantaList = new ArrayList<>();
 
@@ -75,7 +111,7 @@ public class lokantaDao {
             PreparedStatement pst = this.getC().prepareStatement("update lokanta set menu=?,fiyat=? where lokanta_id=?");
             pst.setString(1, lokanta.getMenu());
             pst.setInt(2, lokanta.getFiyat());
-            pst.setLong(2, lokanta.getMenu_id());
+            pst.setLong(3, lokanta.getMenu_id());
             pst.executeUpdate();
 
         } catch (SQLException e) {
@@ -104,8 +140,8 @@ public class lokantaDao {
     public Lokanta find(Long id) {
         Lokanta l = null;
         try {
-             PreparedStatement pst = this.getC().prepareStatement("select *from lokanta where lokanta_id=?");
-             pst.setLong(1,id);
+            PreparedStatement pst = this.getC().prepareStatement("select *from lokanta where lokanta_id=?");
+            pst.setLong(1, id);
             ResultSet rs = pst.executeQuery();
             rs.next();
             l = new Lokanta();
@@ -119,6 +155,7 @@ public class lokantaDao {
         }
         return l;
     }
+
     public Connector getDb() {
         if (this.db == null) {
             this.db = new Connector();
